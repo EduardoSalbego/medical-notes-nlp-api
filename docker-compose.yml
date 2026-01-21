@@ -1,0 +1,59 @@
+services:
+  laravel-app:
+    build:
+      context: ./laravel-gateway
+      dockerfile: Dockerfile
+    image: medical-notes-laravel
+    container_name: medical_notes_laravel
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: postgres-db
+      AI_ENGINE_URL: http://ai-engine:8001
+    depends_on:
+      - postgres-db
+      - ai-engine
+    volumes:
+      - ./laravel-gateway:/var/www
+    networks:
+      - medical-net
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  ai-engine:
+    build:
+      context: ./ai-engine
+      dockerfile: Dockerfile
+    image: medical-notes-ai
+    container_name: medical_notes_ai
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./ai-engine:/app
+    networks:
+      - medical-net
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+
+  postgres-db:
+    image: ankane/pgvector:latest
+    container_name: medical_notes_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: medical_notes
+      POSTGRES_USER: medical_user
+      POSTGRES_PASSWORD: medical_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - medical-net
+
+networks:
+  medical-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
