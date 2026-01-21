@@ -11,6 +11,7 @@ __pycache__/
 /ai-engine/venv/
 /ai-engine/.env
 .pytest_cache/
+.venv/
 
 # --- IDEs ---
 .idea/

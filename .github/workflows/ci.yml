@@ -7,11 +7,9 @@ on:
     branches: [main]
 
 jobs:
-  # --- JOB 1: TESTAR O LARAVEL ---
   laravel-tests:
     runs-on: ubuntu-latest
 
-    # Sobe um Postgres só para o teste (isolado)
     services:
       postgres:
         image: ankane/pgvector:latest
@@ -56,7 +54,6 @@ jobs:
           php artisan migrate --force
           php artisan test
 
-  # --- JOB 2: TESTAR O PYTHON (IA) ---
   python-tests:
     runs-on: ubuntu-latest
 
