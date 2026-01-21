@@ -75,4 +75,6 @@ jobs:
 
       - name: Run Tests
         working-directory: ./ai-engine
+        env:
+          PYTHONPATH: ${{ github.workspace }}/ai-engine
         run: pytest
