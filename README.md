@@ -95,9 +95,9 @@ graph LR
 ---
 
 ## Project Status
-* [X] Microservices Architecture Design
-* [ ] CI/CD Pipeline Configuration
-* [ ] Docker Infrastructure Setup
+* [ ] Microservices Architecture Design
+* [X] CI/CD Pipeline Configuration
+* [X] Docker Infrastructure Setup
 * [ ] AI Engine Implementation (NER)
 * [ ] Laravel Gateway Implementation
 * [ ] Security Layers (Masking & Encryption)
