@@ -107,5 +107,4 @@ graph LR
 ## 👤 Developed by
 
 **Eduardo Salbego**
-Last Year Software Engineering Student | Full Stack Developer
-[LinkedIn](www.linkedin.com/in/eduardo-salbego-638977236)
+Last Year Software Engineering Student @ UNIPAMPA
