@@ -1,6 +1,6 @@
 import spacy
 import re
-from spacy.tokens import Span
+from spacy.pipeline import EntityRuler
 from app.schemas import AnalysisResponse, Entity
 
 class NLPService:
@@ -22,11 +22,29 @@ class NLPService:
                 {"label": "MEDICAMENTO", "pattern": [{"LOWER": "amoxicilina"}]},
                 {"label": "SINTOMA", "pattern": [{"LOWER": "febre"}]},
                 {"label": "SINTOMA", "pattern": [{"LOWER": "cefaleia"}]},
+                {"label": "SINTOMA_GRAVE", "pattern": [{"LOWER": "dispneia"}]},
+                {"label": "SINTOMA_GRAVE", "pattern": [{"LOWER": "convulsao"}]},
                 {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "hipertensao"}]},
                 {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "diabetes"}]}
             ]
             
             ruler.add_patterns(patterns)
+
+    def _calculate_risk(self, entities):
+        score = 0
+        for ent in entities:
+            if ent.label == "SINTOMA_GRAVE":
+                score += 50
+            elif ent.label == "DIAGNOSTICO":
+                score += 20
+            elif ent.label == "SINTOMA":
+                score += 10
+        
+        if score >= 50:
+            return "High"
+        if score >= 20:
+            return "Medium"
+        return "Low"
 
     def process_text(self, text: str) -> AnalysisResponse:
         doc = self.nlp(text)
@@ -49,18 +67,12 @@ class NLPService:
                 end=match.end()
             ))
 
-        email_pattern = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-        for match in re.finditer(email_pattern, text):
-            entities.append(Entity(
-                text=match.group(),
-                label="PII_EMAIL",
-                start=match.start(),
-                end=match.end()
-            ))
+        risk_level = self._calculate_risk(entities)
 
         return AnalysisResponse(
             status="success",
-            entities=entities
+            entities=entities,
+            risk_score=risk_level
         )
 
 nlp_service = NLPService()
