@@ -20,12 +20,30 @@ class NLPService:
             patterns = [
                 {"label": "MEDICAMENTO", "pattern": [{"LOWER": "dipirona"}]},
                 {"label": "MEDICAMENTO", "pattern": [{"LOWER": "amoxicilina"}]},
+                {"label": "MEDICAMENTO", "pattern": [{"LOWER": "paracetamol"}]},
+                {"label": "MEDICAMENTO", "pattern": [{"LOWER": "ibuprofeno"}]},
+                {"label": "MEDICAMENTO", "pattern": [{"LOWER": "insulina"}]},
+                {"label": "MEDICAMENTO", "pattern": [{"LOWER": "omeprazol"}]},
+                
                 {"label": "SINTOMA", "pattern": [{"LOWER": "febre"}]},
                 {"label": "SINTOMA", "pattern": [{"LOWER": "cefaleia"}]},
+                {"label": "SINTOMA", "pattern": [{"LOWER": "tosse"}]},
+                {"label": "SINTOMA", "pattern": [{"LOWER": "nausea"}]},
+                {"label": "SINTOMA", "pattern": [{"LOWER": "fadiga"}]},
+                
                 {"label": "SINTOMA_GRAVE", "pattern": [{"LOWER": "dispneia"}]},
                 {"label": "SINTOMA_GRAVE", "pattern": [{"LOWER": "convulsao"}]},
+                {"label": "SINTOMA_GRAVE", "pattern": [{"LOWER": "hemorragia"}]},
+                {"label": "SINTOMA_GRAVE", "pattern": [{"LOWER": "cianose"}]},
+                {"label": "SINTOMA_GRAVE", "pattern": [{"LOWER": "desmaio"}]},
+                {"label": "SINTOMA_GRAVE", "pattern": [{"LOWER": "dor"}, {"LOWER": "no"}, {"LOWER": "peito"}]},
+                
                 {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "hipertensao"}]},
-                {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "diabetes"}]}
+                {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "diabetes"}]},
+                {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "pneumonia"}]},
+                {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "infarto"}]},
+                {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "avc"}]},
+                {"label": "DIAGNOSTICO", "pattern": [{"LOWER": "asma"}]}
             ]
             
             ruler.add_patterns(patterns)
