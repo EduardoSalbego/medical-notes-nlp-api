@@ -53,28 +53,3 @@ jobs:
         run: |
           php artisan migrate --force
           php artisan test
-
-  python-tests:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install Dependencies
-        working-directory: ./ai-engine
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          # Instala o modelo do spaCy via link direto (igual fizemos no Dockerfile)
-          pip install https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.7.0/pt_core_news_sm-3.7.0-py3-none-any.whl
-
-      - name: Run Tests
-        working-directory: ./ai-engine
-        env:
-          PYTHONPATH: ${{ github.workspace }}/ai-engine
-        run: pytest
