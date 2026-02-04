@@ -1,10 +1,10 @@
-# --- Laravel ---
+# Laravel
 /laravel-gateway/vendor
 /laravel-gateway/node_modules
 /laravel-gateway/.env
 /laravel-gateway/storage/*.key
 
-# --- Python ---
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -13,7 +13,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 
-# --- IDEs ---
+# IDEs
 .idea/
 .vscode/
 *.swp
