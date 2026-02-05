@@ -26,7 +26,7 @@ COPY --chown=www-data:www-data . /var/www/html
 RUN composer install --no-dev --optimize-autoloader
 
 # Generate application key
-COPY .env.example .env
+RUN cp .env.example .env
 RUN php artisan key:generate --ansi
 
 EXPOSE 8000
