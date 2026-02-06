@@ -1,110 +1,198 @@
-# Secure Medical NLP Gateway
+# Medical Notes NLP API - Medical Notes Processing System
 
-![PHP Version](https://img.shields.io/badge/php-8.2-777BB4.svg)
-![Python Version](https://img.shields.io/badge/python-3.11-3776AB.svg)
-![License](https://img.shields.io/badge/license-MIT-green)
-
-A HIPAA-compliant, microservices-based system designed to process unstructured medical notes. It orchestrates a secure **Laravel Gateway** for governance and a **FastAPI/spaCy Engine** for Natural Language Processing (NER & Risk Classification).
+A complete system for processing medical notes using NLP, with a separated architecture between the AI Engine (Python/FastAPI) and the Management Gateway (Laravel 11).
 
 ---
 
 ## Architecture
 
-The system follows a strict **Separation of Concerns** principle, isolating the heavy AI processing from the management/security layer.
-
-```
-graph LR
-    Client[Client App] -->|HTTPS + Bearer Token| Gateway[Laravel Gateway]
-    
-    subgraph "Secure Zone (Laravel 11)"
-        Gateway --> Auth[Sanctum Auth & RBAC]
-        Auth --> Masking[Data Masking Service]
-        Masking --> Audit[Audit Logger]
-    end
-    
-    subgraph "AI Zone (Python FastAPI)"
-        Masking -->|JSON (Anonymized)| AI[AI Engine]
-        AI -->|SpaCy| NER[Entity Extraction]
-        AI -->|Heuristic| Risk[Risk Classifier]
-    end
-    
-    subgraph "Persistence"
-        Gateway -->|AES-256 Encrypted| DB[(Postgres + pgvector)]
-    end
-
-    AI -->|Analysis Result| Gateway
 ```
 
-## Tech Stack
+┌─────────────────┐
+│  Laravel 11     │  ← Gateway & Management
+│  (Sanctum/RBAC) │     - Authentication
+│                 │     - Permission Control
+│                 │     - Audit Logs
+│                 │     - Data Masking
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  FastAPI        │  ← AI Engine
+│  (Python/NLP)   │     - NER (Symptoms, Medications, Diagnoses)
+│                 │     - Risk Classification
+│                 │     - NLP Processing
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  PostgreSQL     │
+│  (pgvector)     │  ← Database
+└─────────────────┘
 
-### Gateway & Management Service
-* **Framework:** Laravel 11
-* **Authentication:** Laravel Sanctum
-* **Testing:** Pest PHP
-* **Documentation:** Swagger/OpenAPI
-
-### AI Engine Microservice
-* **Framework:** FastAPI (Python)
-* **NLP Library:** spaCy (`pt_core_news_sm` / `en_core_web_sm`)
-* **Validation:** Pydantic
-* **Testing:** Pytest
-
-### Infrastructure
-* **Database:** PostgreSQL 16 with `pgvector` extension (ready for semantic search).
-* **Containerization:** Docker & Docker Compose.
-* **CI/CD:** GitHub Actions (Automated Testing, Linting, and Build).
-
----
-
-## Getting Started
-
-### Prerequisites
-* Docker & Docker Compose
-* Git
-
-### Installation
-
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/EduardoSalbego/medical-notes-nlp-api.git
-    cd medical-notes-nlp-api
-    ```
-
-2.  **Start the environment (Docker)**
-    This command will build both the Laravel and Python containers and start the database.
-    ```bash
-    docker-compose up -d --build
-    ```
-
-3.  **Setup Laravel**
-    ```bash
-    # Install dependencies
-    docker exec -it medical_notes_laravel composer install
-    
-    # Run migrations and seeders
-    docker exec -it medical_notes_laravel php artisan migrate --seed
-    
-    # Generate Encryption Keys
-    docker exec -it medical_notes_laravel php artisan key:generate
-    ```
-
-4.  **Access the Application**
-    * **Laravel API:** `http://localhost:8000`
-    * **FastAPI Documentation:** `http://localhost:8001/docs`
+```
 
 ---
 
-## Project Status
-* [ ] Microservices Architecture Design
-* [X] CI/CD Pipeline Configuration
-* [X] Docker Infrastructure Setup
-* [ ] AI Engine Implementation (NER)
-* [ ] Laravel Gateway Implementation
-* [ ] Security Layers (Masking & Encryption)
+## Features
+
+- **NER (Named Entity Recognition)**: Extraction of symptoms, medications, and diagnoses  
+- **Risk Classification**: Automatic case severity categorization  
+- **Authentication**: Laravel Sanctum  
+- **RBAC**: Role-based access control (Spatie)  
+- **Audit Logs**: Full request logging (HIPAA-like)  
+- **Data Masking**: Automatic removal of sensitive data (De-identification)  
+- **Encryption**: Sensitive data encrypted before storage  
+- **Semantic Search**: PostgreSQL with pgvector  
 
 ---
 
-## 👤 Developed by
+## Prerequisites
 
-**Eduardo Salbego**
-Last Year Software Engineering Student @ UNIPAMPA
+- Docker & Docker Compose  
+- Python 3.11+  
+- PHP 8.2+  
+- Composer  
+- Node.js & NPM (for frontend, if needed)  
+
+---
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd medical-notes-nlp-api
+```
+
+### 2. Configure environment variables
+
+```bash
+cp .env.example .env
+cp ai-engine/.env.example ai-engine/.env
+```
+
+### 3. Start services with Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+### 4. Set up Laravel
+
+```bash
+cd laravel-gateway
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+```
+
+### 5. Set up the Python AI Engine
+
+```bash
+cd ai-engine
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+```
+
+---
+
+## Usage
+
+### API Documentation
+
+- Laravel Gateway: http://localhost:8000/api/documentation
+- FastAPI AI Engine: http://localhost:8001/docs
+
+### Request Example
+
+```bash
+POST http://localhost:8000/api/v1/medical-notes/process
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "medical_note": "Patient presents high fever, headache, and dry cough. Prescribed Paracetamol 500mg every 6 hours. Diagnosis: Common flu."
+}
+```
+
+### Response
+
+```bash
+{
+  "status": "success",
+  "data": {
+    "entities": {
+      "symptoms": ["high fever", "headache", "dry cough"],
+      "medications": ["Paracetamol 500mg"],
+      "diagnoses": ["Common flu"]
+    },
+    "risk_classification": "moderate",
+    "confidence_score": 0.92,
+    "processed_at": "2026-01-15T10:30:00Z",
+    "note_id": "masked_identifier"
+  }
+}
+```
+
+---
+
+## Security
+
+- **Encryption**: All sensitive data is encrypted using AES-256
+- **Data Masking**: Names, personal IDs, and identifiers are removed before NLP processing
+- **Audit Logs**: All operations are logged for compliance
+- **RBAC**: Granular role-based permission control
+
+---
+
+## Testing
+
+```bash
+# Laravel
+cd laravel-gateway
+php artisan test
+
+# Python
+cd ai-engine
+pytest
+```
+
+---
+
+## Project Structure
+
+```
+medical-notes-nlp-api/
+├── ai-engine/              # Python FastAPI
+│   ├── app/
+│   ├── tests/
+│   └── requirements.txt
+├── laravel-gateway/        # Laravel 11
+│   ├── app/
+│   ├── database/
+│   └── tests/
+├── docker-compose.yml
+├── .github/
+│   └── workflows/
+└── README.md
+```
+
+---
+
+## CI/CD
+The project includes a GitHub Actions pipeline for:
+
+- Automated testing
+- Code quality checks (Linting)
+- Build and deployment
+
+---
+
+## Developed by
+**Eduardo Salbego** Software Engineering Student | Final Year / 9th Semester @ UNIPAMPA
