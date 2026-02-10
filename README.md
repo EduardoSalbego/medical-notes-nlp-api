@@ -188,10 +188,12 @@ medical-notes-nlp-api/
 ├── nginx/                      # Web Server Configuration
 │   └── nginx.conf              # Reverse Proxy
 │
-├── docker-compose.yml
-│
 ├── .github/
 │   └── workflows/              # CI/CD Pipelines
+│
+├── docs/                       # Project Documentation
+│
+├── docker-compose.yml
 │
 ├── CONTRIBUTING.md
 ├── LICENSE
