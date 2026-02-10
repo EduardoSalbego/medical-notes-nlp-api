@@ -36,24 +36,24 @@ A complete system for processing medical notes using NLP, with a separated archi
 
 ## Features
 
-- **NER (Named Entity Recognition)**: Extraction of symptoms, medications, and diagnoses  
-- **Risk Classification**: Automatic case severity categorization  
-- **Authentication**: Laravel Sanctum  
-- **RBAC**: Role-based access control (Spatie)  
-- **Audit Logs**: Full request logging (HIPAA-like)  
-- **Data Masking**: Automatic removal of sensitive data (De-identification)  
-- **Encryption**: Sensitive data encrypted before storage  
-- **Semantic Search**: PostgreSQL with pgvector  
+- **NER (Named Entity Recognition)**: Extraction of symptoms, medications, and diagnoses
+- **Risk Classification**: Automatic case severity categorization
+- **Authentication**: Laravel Sanctum
+- **RBAC**: Role-based access control (Spatie)
+- **Audit Logs**: Full request logging (HIPAA-like)
+- **Data Masking**: Automatic removal of sensitive data (De-identification)
+- **Encryption**: Sensitive data encrypted before storage
+- **Semantic Search**: PostgreSQL with pgvector
 
 ---
 
 ## Prerequisites
 
-- Docker & Docker Compose  
-- Python 3.11+  
-- PHP 8.2+  
-- Composer  
-- Node.js & NPM (for frontend, if needed)  
+- Docker & Docker Compose
+- Python 3.11+
+- PHP 8.2+
+- Composer
+- Node.js & NPM (for frontend, if needed)
 
 ---
 
@@ -169,23 +169,39 @@ pytest
 
 ```
 medical-notes-nlp-api/
-├── ai-engine/              # Python FastAPI
+├── ai-engine/                  # Python FastAPI
 │   ├── app/
 │   ├── tests/
 │   └── requirements.txt
-├── laravel-gateway/        # Laravel 11
+│
+├── laravel-gateway/            # Laravel 11
 │   ├── app/
 │   ├── database/
 │   └── tests/
+│
+├── frontend/                   # Vue.js 3 + Vite (UI)
+│   ├── src/
+│   │   ├── views/
+│   │   └── App.vue
+│   └── vite.config.js
+│
+├── nginx/                      # Web Server Configuration
+│   └── nginx.conf              # Reverse Proxy
+│
 ├── docker-compose.yml
+│
 ├── .github/
-│   └── workflows/
+│   └── workflows/              # CI/CD Pipelines
+│
+├── CONTRIBUTING.md
+├── LICENSE
 └── README.md
 ```
 
 ---
 
 ## CI/CD
+
 The project includes a GitHub Actions pipeline for:
 
 - Automated testing
@@ -195,4 +211,5 @@ The project includes a GitHub Actions pipeline for:
 ---
 
 ## Developed by
+
 **Eduardo Salbego** Software Engineering Student | Final Year / 9th Semester @ UNIPAMPA
