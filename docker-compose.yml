@@ -46,7 +46,6 @@ services:
     env_file:
       - .env
     environment:
-      - APP_KEY=base64:U8U2aNqF5/7x8y9z0/1W2e3R4t5y6u7i8o9p0a1s2d3=
       - DB_CONNECTION=pgsql
       - DB_HOST=postgres
       - DB_PORT=5432
