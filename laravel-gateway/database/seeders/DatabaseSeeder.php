@@ -15,34 +15,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $userRole = Role::firstOrCreate(['name' => 'user']);
-        $doctorRole = Role::firstOrCreate(['name' => 'doctor']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $doctorRole = Role::firstOrCreate(['name' => 'doctor', 'guard_name' => 'web']);
+        $userRole = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
 
         $permissions = [
             'process_medical_notes',
             'view_medical_notes',
-            'view_all_medical_notes',
             'view_audit_logs',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        $adminRole->givePermissionTo(Permission::all());
-        $doctorRole->givePermissionTo(['process_medical_notes', 'view_medical_notes']);
-        $userRole->givePermissionTo(['process_medical_notes']);
-
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@medical-notes.local'],
-            [
-                'name' => 'Administrator',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ]
-        );
-        $admin->assignRole('admin');
+        $adminRole->syncPermissions(Permission::all());
+        $doctorRole->syncPermissions(['process_medical_notes', 'view_medical_notes']);
 
         $doctor = User::firstOrCreate(
             ['email' => 'doctor@medical-notes.local'],
@@ -52,16 +40,18 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
-        $doctor->assignRole('doctor');
+        $doctor->assignRole($doctorRole);
 
-        $user = User::firstOrCreate(
-            ['email' => 'user@medical-notes.local'],
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@medical-notes.local'],
             [
-                'name' => 'Test User',
+                'name' => 'Administrator',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]
         );
-        $user->assignRole('user');
+        $admin->assignRole($adminRole);
+        
+        $this->command->info('✅ Usuários Criados: doctor@medical-notes.local / password');
     }
 }
