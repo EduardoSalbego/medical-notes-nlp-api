@@ -1,119 +1,131 @@
-# Medical Notes NLP API - Medical Notes Processing System
+# Secure Medical NLP Gateway & Processing Pipeline
 
-A complete system for processing medical notes using NLP, with a separated architecture between the AI Engine (Python/FastAPI) and the Management Gateway (Laravel 11).
+[![Laravel 11](https://img.shields.io/badge/Gateway-Laravel%2011-red)](https://laravel.com)
+[![FastAPI](https://img.shields.io/badge/AI%20Engine-FastAPI%20%2F%20Python-005571?logo=fastapi)](https://fastapi.tiangolo.com)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%20%2F%20pgvector-336791?logo=postgresql)](https://www.postgresql.org)
+[![Docker](https://img.shields.io/badge/Environment-Docker%20%2F%20Orchestration-blue?logo=docker)](https://www.docker.com)
+[![CI/CD](https://img.shields.io/badge/Pipeline-GitHub%20Actions-2088FF?logo=githubactions)](https://github.com/features/actions)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
+
+An enterprise-grade, highly decoupled **Healthcare Data Ingestion & NLP Pipeline**. The architecture isolates an AI Processing Engine powered by **Python (FastAPI & spaCy)** from a secure Management Gateway built with **Laravel 11 (Sanctum & Spatie RBAC)**. 
+
+The system is designed with a compliance-first approach mimicking HIPAA security standards, featuring automated PHI (Protected Health Information) de-identification, AES-256 database encryption at rest, comprehensive cryptographic audit logging, and high-density semantic vector searches powered by **PostgreSQL (pgvector)**.
 
 ---
 
-## Architecture
+## Architectural Topology
+
+The monorepo enforces a strict separation of concerns, ensuring the heavy NLP compute workloads are isolated from user authentication, rate limiting, and compliance workflows:
 
 ```
 
-┌─────────────────┐
-│  Laravel 11     │  ← Gateway & Management
-│  (Sanctum/RBAC) │     - Authentication
-│                 │     - Permission Control
-│                 │     - Audit Logs
-│                 │     - Data Masking
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  FastAPI        │  ← AI Engine
-│  (Python/NLP)   │     - NER (Symptoms, Medications, Diagnoses)
-│                 │     - Risk Classification
-│                 │     - NLP Processing
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  PostgreSQL     │
-│  (pgvector)     │  ← Database
-└─────────────────┘
+   ┌─────────────────────────────────┐
+   │    Laravel 11 Security Gateway  │  ← Ingestion & Compliance Layer
+   │  - Stateless Sanctum Auth       │    - Symmetric Data Masking (PHI De-identification)
+   │  - RBAC (Granular Permissions)  │    - AES-256 Envel. Encryption at Rest
+   │  - Immutable Audit Trails       │    - Reverse Proxying & Upstream Rate Limiting
+   └────────────────┬────────────────┘
+                    │
+                    ▼ Upstream REST Call (Stateless JSON Payload)
+   ┌─────────────────────────────────┐
+   │    FastAPI NLP Inference Engine │  ← Machine Learning Layer
+   │  - Named Entity Recognition     │    - spaCy Pipeline Extraction
+   │  - Medical Risk Classification  │    - Multi-Class Clinical Severity Indexing
+   │  - Dynamic Confidence Scoring   │    - Asynchronous High-Throughput Handlers
+   └────────────────┬────────────────┘
+                    │
+                    ▼ Vector Persistence
+   ┌─────────────────────────────────┐
+   │      PostgreSQL (pgvector)      │  ← Distributed Storage Layer
+   │  - Encrypted Text Blobs         │    - Semantic Similarity Clustering
+   │  - Dense Vector Embeddings      │    - Specialized HNSW / IVFFlat Indexing
+   └─────────────────────────────────┘
 
 ```
 
 ---
 
-## Features
+## Core Engineering Features
 
-- **NER (Named Entity Recognition)**: Extraction of symptoms, medications, and diagnoses
-- **Risk Classification**: Automatic case severity categorization
-- **Authentication**: Laravel Sanctum
-- **RBAC**: Role-based access control (Spatie)
-- **Audit Logs**: Full request logging (HIPAA-like)
-- **Data Masking**: Automatic removal of sensitive data (De-identification)
-- **Encryption**: Sensitive data encrypted before storage
-- **Semantic Search**: PostgreSQL with pgvector
+### Clinical Named Entity Recognition (NER)
+Utilizes custom NLP pipelines to parse unstructured medical text and extract high-value clinical entities including **Symptoms/Clinical Signs**, **Medications/Dosages**, and **Diagnoses** with strict confidence token scoring.
+
+### Automated Severity Triaging (Risk Classification)
+Processes extracted metadata through custom heuristic layers to categorize incoming patient notes into multi-class urgency indexes (`low`, `moderate`, `critical`), facilitating automated queue prioritization.
+
+### Compliance-Driven De-Identification (Data Masking)
+A compliance-first pipeline that systematically strips out or masks names, social identifiers, and sensitive timestamps before passing payload packages downstream to the AI inference layers.
+
+### Cryptographic Encryption at Rest & Flight
+Protects data assets using symmetric AES-256-GCM encryption mechanics prior to database writes. All transit packets move strictly over authenticated bearer token channels managed by Laravel Sanctum.
+
+### Tamper-Evident Audit Trails
+Generates structural audit records capturing every microservice hit, user mutations, and inference executions, ensuring complete tracking accountability.
+
+### High-Density Semantic Vector Searches
+Leverages the `pgvector` extension inside PostgreSQL to store multidimensional text embeddings, allowing users to execute fast similarity matches across thousands of unstructured clinical profiles.
 
 ---
 
-## Prerequisites
+## Technical Stack Mappings
 
-- Docker & Docker Compose
-- Python 3.11+
-- PHP 8.2+
-- Composer
-- Node.js & NPM (for frontend, if needed)
+| Architecture Layer | Component Stack Elements |
+|---|---|
+| **API Management Gateway** | Laravel 11 (PHP 8.2), Laravel Sanctum, Spatie Laravel Permission |
+| **Inference Machine Learning** | Python 3.11+, FastAPI, spaCy (Advanced NLP Framework) |
+| **User Interface (UI)** | Vue.js 3, Vite, Axios Client |
+| **Data Architecture** | PostgreSQL, pgvector extension, AES-256 Crypto Drivers |
+| **Orchestration & DevOps** | Nginx (Reverse Proxy), Docker, Docker Compose, GitHub Actions |
+| **Quality & Assurance Suite** | PHPUnit (Backend Tests), PyTest (Inference Engine Profiling) |
 
 ---
 
-## Installation
+## Setting Up the Local Topology
 
-### 1. Clone the repository
+### Infrastructure Requirements
+- Docker Engine & Docker Compose V2 running locally.
+- Active package access for Composer and Python Virtual Environments (`venv`).
+
+### Ingestion Steps
 
 ```bash
+# 1. Clone the structural repository
 git clone <repository-url>
 cd medical-notes-nlp-api
-```
 
-### 2. Configure environment variables
-
-```bash
-cp .env.example .env
+# 2. Replicate downstream environment schemas
+cp laravel-gateway/.env.example lara-gateway/.env
 cp ai-engine/.env.example ai-engine/.env
-```
 
-### 3. Start services with Docker Compose
+# 3. Boot environment up via Docker Compose
+docker-compose up -d --build
 
-```bash
-docker-compose up -d
-```
-
-### 4. Set up Laravel
-
-```bash
+# 4. Bootstrap the Laravel Security Gateway
 cd laravel-gateway
 composer install
 php artisan key:generate
-php artisan migrate
-php artisan db:seed
-```
+php artisan migrate --seed
 
-### 5. Set up the Python AI Engine
-
-```bash
-cd ai-engine
+# 5. Initialize the Isolated Inference Environment
+cd ../ai-engine
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or
-venv\Scripts\activate  # Windows
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
 ---
 
-## Usage
+## API Contracts & Execution Mappings
 
-### API Documentation
+### Upstream Swagger & OpenAPI Visualizers
+- **Security Gateway Playground:** `http://localhost:8000/api/documentation`
+- **FastAPI Core Engine Docs:** `http://localhost:8001/docs`
 
-- Laravel Gateway: http://localhost:8000/api/documentation
-- FastAPI AI Engine: http://localhost:8001/docs
-
-### Request Example
+### Clinical Processing Transaction Sample
 
 ```bash
 POST http://localhost:8000/api/v1/medical-notes/process
-Authorization: Bearer {token}
+Authorization: Bearer 3|vN4kRLXv9YmJ...
 Content-Type: application/json
 
 {
@@ -121,9 +133,9 @@ Content-Type: application/json
 }
 ```
 
-### Response
+### Response Payload Structure
 
-```bash
+```json
 {
   "status": "success",
   "data": {
@@ -135,83 +147,31 @@ Content-Type: application/json
     "risk_classification": "moderate",
     "confidence_score": 0.92,
     "processed_at": "2026-01-15T10:30:00Z",
-    "note_id": "masked_identifier"
+    "note_id": "crypto_masked_identifier_hash"
   }
 }
 ```
 
 ---
 
-## Security
+## Operational Test Suites
 
-- **Encryption**: All sensitive data is encrypted using AES-256
-- **Data Masking**: Names, personal IDs, and identifiers are removed before NLP processing
-- **Audit Logs**: All operations are logged for compliance
-- **RBAC**: Granular role-based permission control
-
----
-
-## Testing
+Verify architectural contract execution boundaries by deploying the dual testing stacks:
 
 ```bash
-# Laravel
+# Execute Laravel Gateway Integration Tests
 cd laravel-gateway
 php artisan test
 
-# Python
+# Execute Python Inference Engine Unit Tests
 cd ai-engine
 pytest
 ```
 
 ---
 
-## Project Structure
+## Author & System Architect
 
-```
-medical-notes-nlp-api/
-├── ai-engine/                  # Python FastAPI
-│   ├── app/
-│   ├── tests/
-│   └── requirements.txt
-│
-├── laravel-gateway/            # Laravel 11
-│   ├── app/
-│   ├── database/
-│   └── tests/
-│
-├── frontend/                   # Vue.js 3 + Vite (UI)
-│   ├── src/
-│   │   ├── views/
-│   │   └── App.vue
-│   └── vite.config.js
-│
-├── nginx/                      # Web Server Configuration
-│   └── nginx.conf              # Reverse Proxy
-│
-├── .github/
-│   └── workflows/              # CI/CD Pipelines
-│
-├── docs/                       # Project Documentation
-│
-├── docker-compose.yml
-│
-├── CONTRIBUTING.md
-├── LICENSE
-└── README.md
-```
-
----
-
-## CI/CD
-
-The project includes a GitHub Actions pipeline for:
-
-- Automated testing
-- Code quality checks (Linting)
-- Build and deployment
-
----
-
-## Developed by
-
-**Eduardo Salbego** Software Engineering Student | Final Year / 9th Semester @ UNIPAMPA
+**Eduardo Salbego**  
+Software Engineer — Specialized in Secure Backend Architecture & Applied AI  
+Let's connect: [LinkedIn](https://www.linkedin.com/in/eduardo-salbego/)
