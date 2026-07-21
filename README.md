@@ -2,14 +2,14 @@
 
 [![Laravel 11](https://img.shields.io/badge/Gateway-Laravel%2011-red)](https://laravel.com)
 [![FastAPI](https://img.shields.io/badge/AI%20Engine-FastAPI%20%2F%20Python-005571?logo=fastapi)](https://fastapi.tiangolo.com)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%20%2F%20pgvector-336791?logo=postgresql)](https://www.postgresql.org)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?logo=postgresql)](https://www.postgresql.org)
 [![Docker](https://img.shields.io/badge/Environment-Docker%20%2F%20Orchestration-blue?logo=docker)](https://www.docker.com)
 [![CI/CD](https://img.shields.io/badge/Pipeline-GitHub%20Actions-2088FF?logo=githubactions)](https://github.com/features/actions)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
 An enterprise-grade, highly decoupled **Healthcare Data Ingestion & NLP Pipeline**. The architecture isolates an AI Processing Engine powered by **Python (FastAPI & spaCy)** from a secure Management Gateway built with **Laravel 11 (Sanctum & Spatie RBAC)**. 
 
-The system is designed with a compliance-first approach mimicking HIPAA security standards, featuring automated PHI (Protected Health Information) de-identification, AES-256 database encryption at rest, comprehensive cryptographic audit logging, and high-density semantic vector searches powered by **PostgreSQL (pgvector)**.
+The system is designed with a compliance-first approach mimicking HIPAA security standards, featuring automated PHI (Protected Health Information) de-identification, application-level AES-256 database encryption at rest, comprehensive compliance audit logging, and structured relational persistence powered by **PostgreSQL**.
 
 ---
 
@@ -22,8 +22,8 @@ The monorepo enforces a strict separation of concerns, ensuring the heavy NLP co
    ┌─────────────────────────────────┐
    │    Laravel 11 Security Gateway  │  ← Ingestion & Compliance Layer
    │  - Stateless Sanctum Auth       │    - Symmetric Data Masking (PHI De-identification)
-   │  - RBAC (Granular Permissions)  │    - AES-256 Envel. Encryption at Rest
-   │  - Immutable Audit Trails       │    - Reverse Proxying & Upstream Rate Limiting
+   │  - RBAC (Granular Permissions)  │    - AES-256 Data Encryption at Rest
+   │  - Compliance Audit Trail       │    - Reverse Proxying & Upstream Rate Limiting
    └────────────────┬────────────────┘
                     │
                     ▼ Upstream REST Call (Stateless JSON Payload)
@@ -34,11 +34,11 @@ The monorepo enforces a strict separation of concerns, ensuring the heavy NLP co
    │  - Dynamic Confidence Scoring   │    - Asynchronous High-Throughput Handlers
    └────────────────┬────────────────┘
                     │
-                    ▼ Vector Persistence
+                    ▼ Data Persistence
    ┌─────────────────────────────────┐
-   │      PostgreSQL (pgvector)      │  ← Distributed Storage Layer
-   │  - Encrypted Text Blobs         │    - Semantic Similarity Clustering
-   │  - Dense Vector Embeddings      │    - Specialized HNSW / IVFFlat Indexing
+   │    PostgreSQL                   │  ← Relational Storage Layer
+   │  - Encrypted Note Payload Blobs │    - Relational Entity Indexing
+   │  - Extracted Clinical Entities  │    - Fast Metadata Queries
    └─────────────────────────────────┘
 
 ```
@@ -57,13 +57,13 @@ Processes extracted metadata through custom heuristic layers to categorize incom
 A compliance-first pipeline that systematically strips out or masks names, social identifiers, and sensitive timestamps before passing payload packages downstream to the AI inference layers.
 
 ### Cryptographic Encryption at Rest & Flight
-Protects data assets using symmetric AES-256-GCM encryption mechanics prior to database writes. All transit packets move strictly over authenticated bearer token channels managed by Laravel Sanctum.
+Protects sensitive medical note content using application-level AES-256 encryption prior to database writes. All transit packets move strictly over authenticated bearer token channels managed by Laravel Sanctum.
 
-### Tamper-Evident Audit Trails
-Generates structural audit records capturing every microservice hit, user mutations, and inference executions, ensuring complete tracking accountability.
+### Comprehensive Compliance Audit Logging
+Generates structured audit records capturing every microservice hit, user mutations, and inference executions, ensuring complete operational tracking accountability.
 
-### High-Density Semantic Vector Searches
-Leverages the `pgvector` extension inside PostgreSQL to store multidimensional text embeddings, allowing users to execute fast similarity matches across thousands of unstructured clinical profiles.
+### Relational Data Storage & Indexing
+Leverages PostgreSQL to store encrypted clinical note payloads, extracted entities, and historical risk classification statistics efficiently.
 
 ---
 
@@ -74,7 +74,7 @@ Leverages the `pgvector` extension inside PostgreSQL to store multidimensional t
 | **API Management Gateway** | Laravel 11 (PHP 8.2), Laravel Sanctum, Spatie Laravel Permission |
 | **Inference Machine Learning** | Python 3.11+, FastAPI, spaCy (Advanced NLP Framework) |
 | **User Interface (UI)** | Vue.js 3, Vite, Axios Client |
-| **Data Architecture** | PostgreSQL, pgvector extension, AES-256 Crypto Drivers |
+| **Data Architecture** | PostgreSQL, AES-256 Crypto Drivers |
 | **Orchestration & DevOps** | Nginx (Reverse Proxy), Docker, Docker Compose, GitHub Actions |
 | **Quality & Assurance Suite** | PHPUnit (Backend Tests), PyTest (Inference Engine Profiling) |
 
